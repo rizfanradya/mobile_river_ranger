@@ -3,7 +3,6 @@ import { useAuth } from "@/context/authContext";
 import { FontAwesome } from "@expo/vector-icons";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -31,7 +30,6 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { onSignIn, authState } = useAuth();
-  const router = useRouter();
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -58,7 +56,7 @@ export default function SignIn() {
 
   return (
     <>
-      {!authState?.authenticated ? (
+      {!authState?.authenticated && !authState?.token ? (
         <AlertNotificationRoot>
           <KeyboardAvoidingView
             style={{ flex: 1 }}
