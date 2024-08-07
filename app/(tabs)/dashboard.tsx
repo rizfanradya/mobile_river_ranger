@@ -18,6 +18,27 @@ export default function HomeScreen() {
     }
   }, [authState]);
 
+  const dataDummy = [
+    {
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id nulla libero...",
+      image: require("@/assets/images/partial-react-logo.png"),
+      option: "Option 1",
+    },
+    {
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id nulla libero...",
+      image: require("@/assets/images/partial-react-logo.png"),
+      option: "Option 2",
+    },
+    {
+      description:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id nulla libero...",
+      image: require("@/assets/images/partial-react-logo.png"),
+      option: "Option 3",
+    },
+  ];
+
   return (
     <>
       {authState?.authenticated && authState.token ? (
@@ -31,39 +52,21 @@ export default function HomeScreen() {
               />
             }
           >
-            <View
-              style={{
-                backgroundColor: "#373A40",
-                borderRadius: 10,
-                overflow: "hidden",
-                flexDirection: "row",
-              }}
-            >
-              <Image
-                source={require("@/assets/images/partial-react-logo.png")}
-                style={{ width: 100, height: 100 }}
-              />
-              <View style={{ padding: 6 }}>
-                <Text
-                  style={{ color: "white", flexShrink: 1, flexWrap: "wrap" }}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-                  id nulla libero....
-                </Text>
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 12,
-                    backgroundColor: "#FFAD60",
-                    borderRadius: 6,
-                    padding: 4,
-                    alignSelf: "flex-end",
-                  }}
-                >
-                  Option 1
-                </Text>
+            {dataDummy.map((data) => (
+              <View style={styles.cardContainer}>
+                <Image source={data.image} style={styles.cardImage} />
+                <View style={styles.cardDescription}>
+                  <Text
+                    style={styles.cardTextDescription}
+                    numberOfLines={3}
+                    ellipsizeMode="tail"
+                  >
+                    {data.description}
+                  </Text>
+                  <Text style={styles.cardOptionChip}>{data.option}</Text>
+                </View>
               </View>
-            </View>
+            ))}
           </ParallaxScrollView>
           <FormMasterData />
         </>
@@ -81,5 +84,33 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: "absolute",
+  },
+  cardContainer: {
+    backgroundColor: "#373A40",
+    borderRadius: 10,
+    overflow: "hidden",
+    flexDirection: "row",
+  },
+  cardImage: {
+    width: 100,
+    height: 100,
+  },
+  cardDescription: {
+    flex: 1,
+    padding: 8,
+    justifyContent: "space-between",
+  },
+  cardTextDescription: {
+    color: "white",
+    flexShrink: 1,
+    flexWrap: "wrap",
+  },
+  cardOptionChip: {
+    color: "white",
+    fontSize: 12,
+    backgroundColor: "#FFAD60",
+    borderRadius: 6,
+    padding: 4,
+    alignSelf: "flex-start",
   },
 });
