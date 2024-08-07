@@ -1,12 +1,20 @@
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Animated, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Animated,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
 export default function FormMasterData() {
   const [buttonAddData, setButtonAddData] = useState(false);
   const cameraAnim = useRef(new Animated.Value(0)).current;
   const formAnim = useRef(new Animated.Value(0)).current;
+  const [cameraUri, setCameraUri] = useState<string | null>(null);
 
   useEffect(() => {
     Animated.parallel([
@@ -62,7 +70,7 @@ export default function FormMasterData() {
       quality: 1,
     });
     if (!result.canceled) {
-      Alert.alert("Gambar dipilih", `URI Gambar: ${result.assets[0].uri}`);
+      setCameraUri(result.assets[0].uri);
     }
     console.log(result);
   };
@@ -75,125 +83,135 @@ export default function FormMasterData() {
       quality: 1,
     });
     if (!result.canceled) {
-      Alert.alert("File dipilih", `URI File: ${result.assets[0].uri}`);
+      setCameraUri(result.assets[0].uri);
     }
     console.log(result);
   };
 
   return (
     <>
-      <TouchableOpacity
-        onPress={() => setButtonAddData(!buttonAddData)}
-        style={{
-          position: "absolute",
-          bottom: 50,
-          right: 30,
-          width: 70,
-          height: 70,
-          zIndex: 999,
-        }}
-      >
-        <View
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "#2DCE89",
-            borderRadius: 99999,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <FontAwesome6
-            name={buttonAddData ? "xmark" : "plus"}
-            style={{
-              color: "rgb(1, 1, 1)",
-              fontSize: 30,
-            }}
-          />
-        </View>
-      </TouchableOpacity>
+      <>
+        {cameraUri && (
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: cameraUri }}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </View>
+        )}
+      </>
 
-      <Animated.View
-        style={{
-          position: "absolute",
-          bottom: 55,
-          right: 35,
-          transform: [
-            { translateY: cameraTranslateY },
-            { translateX: cameraTranslateX },
-          ],
-          opacity: cameraAnim,
-        }}
-      >
+      <>
         <TouchableOpacity
-          onPress={() => handleCamera()}
-          style={{
-            width: 50,
-            height: 50,
-            display: buttonAddData ? "flex" : "none",
-          }}
+          onPress={() => setButtonAddData(!buttonAddData)}
+          style={styles.mainButton}
         >
-          <View
-            style={{
-              width: "100%",
-              height: "100%",
-              backgroundColor: "#11CDEF",
-              borderRadius: 99999,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+          <View style={styles.mainButtonInner}>
             <FontAwesome6
-              name="camera"
-              style={{
-                color: "rgb(1, 1, 1)",
-                fontSize: 20,
-              }}
+              name={buttonAddData ? "xmark" : "plus"}
+              style={styles.mainButtonIcon}
             />
           </View>
         </TouchableOpacity>
-      </Animated.View>
 
-      <Animated.View
-        style={{
-          position: "absolute",
-          bottom: 55,
-          right: 35,
-          transform: [
-            { translateY: formTranslateY },
-            { translateX: formTranslateX },
-          ],
-          opacity: formAnim,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => handleForm()}
-          style={{
-            width: 50,
-            height: 50,
-            display: buttonAddData ? "flex" : "none",
-          }}
+        <Animated.View
+          style={[
+            styles.animatedButton,
+            {
+              transform: [
+                { translateY: cameraTranslateY },
+                { translateX: cameraTranslateX },
+              ],
+              opacity: cameraAnim,
+            },
+          ]}
         >
-          <View
-            style={{
-              width: "100%",
-              height: "100%",
-              backgroundColor: "#11CDEF",
-              borderRadius: 99999,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <FontAwesome6
-              name="image"
-              style={{
-                color: "rgb(1, 1, 1)",
-                fontSize: 20,
-              }}
-            />
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
+          <TouchableOpacity onPress={handleCamera} style={styles.button}>
+            <View style={styles.buttonInner}>
+              <FontAwesome6 name="camera" style={styles.buttonIcon} />
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+
+        <Animated.View
+          style={[
+            styles.animatedButton,
+            {
+              transform: [
+                { translateY: formTranslateY },
+                { translateX: formTranslateX },
+              ],
+              opacity: formAnim,
+            },
+          ]}
+        >
+          <TouchableOpacity onPress={handleForm} style={styles.button}>
+            <View style={styles.buttonInner}>
+              <FontAwesome6 name="image" style={styles.buttonIcon} />
+            </View>
+          </TouchableOpacity>
+        </Animated.View>
+      </>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  imageContainer: {
+    backgroundColor: "white",
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    top: 50,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  image: {
+    width: "100%",
+    aspectRatio: 1,
+  },
+  mainButton: {
+    position: "absolute",
+    bottom: 50,
+    right: 30,
+    width: 70,
+    height: 70,
+    zIndex: 999,
+  },
+  mainButtonInner: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#2DCE89",
+    borderRadius: 99999,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  mainButtonIcon: {
+    color: "rgb(1, 1, 1)",
+    fontSize: 30,
+  },
+  animatedButton: {
+    position: "absolute",
+    bottom: 55,
+    right: 35,
+  },
+  button: {
+    width: 50,
+    height: 50,
+    display: "flex",
+  },
+  buttonInner: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#11CDEF",
+    borderRadius: 99999,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonIcon: {
+    color: "rgb(1, 1, 1)",
+    fontSize: 20,
+  },
+});
