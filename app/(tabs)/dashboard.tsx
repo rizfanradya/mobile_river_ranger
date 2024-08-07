@@ -52,8 +52,8 @@ export default function HomeScreen() {
               />
             }
           >
-            {dataDummy.map((data) => (
-              <View style={styles.cardContainer}>
+            {dataDummy.map((data, index) => (
+              <View style={styles.cardContainer} key={index}>
                 <Image source={data.image} style={styles.cardImage} />
                 <View style={styles.cardDescription}>
                   <Text
