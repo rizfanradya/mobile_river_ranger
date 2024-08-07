@@ -8,21 +8,14 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { AuthProvider, useAuth } from "@/context/authContext";
-import { Button } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "./(tabs)";
-import SignIn from "./(signin)";
+import { AuthProvider } from "@/context/authContext";
+import { Stack } from "expo-router/stack";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-const Stack = createNativeStackNavigator();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const { authState, onSignOut } = useAuth();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
@@ -43,30 +36,11 @@ export default function RootLayout() {
         <ThemeProvider
           value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-          <Stack.Navigator>
-            <Stack.Screen
-              name="dashboard"
-              component={HomeScreen}
-            ></Stack.Screen>
-            <Stack.Screen
-              name="signin"
-              component={SignIn}
-              options={{ headerShown: false }}
-            ></Stack.Screen>
-          </Stack.Navigator>
-          {/* <Stack>
-            <Stack.Screen
-              name="(tabs)"
-              options={{
-                headerShown: false,
-                headerRight: () => (
-                  <Button onPress={onSignOut} title="Logout" />
-                ),
-              }}
-            />
-            <Stack.Screen name="+not-found" />
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(signin)" options={{ headerShown: false }} />
-          </Stack> */}
+            <Stack.Screen name="+not-found" />
+          </Stack>
         </ThemeProvider>
       </AuthProvider>
     </NavigationContainer>

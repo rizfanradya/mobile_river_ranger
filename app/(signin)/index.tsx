@@ -1,124 +1,219 @@
+import IsNotPageSecure from "@/components/isNotPageSecure";
 import { useAuth } from "@/context/authContext";
 import { FontAwesome } from "@expo/vector-icons";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useRouter } from "expo-router";
-import { Block, Input, Text } from "galio-framework";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Button,
   Dimensions,
   ImageBackground,
   KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
   View,
 } from "react-native";
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Dialog,
+} from "react-native-alert-notification";
 
 export default function SignIn() {
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const [loading, setLoading] = useState(false);
   const { width, height } = Dimensions.get("screen");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const { onSignIn, authState } = useAuth();
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const router = useRouter();
 
   const handleSignIn = async () => {
+    setLoading(true);
     const result = await onSignIn!(username, password);
     if (result && result.error) {
-      alert("Invalid username or password");
+      Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: "Failed",
+        textBody: "Invalid username or password",
+        button: "OK",
+        closeOnOverlayTap: false,
+      });
     } else {
-      // router.replace("/(tabs)");
-      navigation.navigate("dashboard");
+      navigation.navigate("(tabs)");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     if (authState?.authenticated) {
-      // router.replace("/(tabs)");
-      navigation.navigate("dashboard");
+      navigation.navigate("(tabs)");
     }
   }, [authState]);
 
-  // if (authState?.authenticated) {
-  //   // router.replace("/(tabs)");
-  // } else {
   return (
-    <Block flex middle>
-      <ImageBackground
-        source={require("../../assets/images/register-bg.png")}
-        style={{ width, height }}
-      >
-        <Block flex middle>
-          <View
-            style={{
-              backgroundColor: "#F4F5F7",
-              borderRadius: 14,
-              shadowColor: "#000000",
-              shadowOffset: {
-                width: 0,
-                height: 4,
-              },
-              shadowRadius: 8,
-              shadowOpacity: 0.1,
-              paddingHorizontal: 20,
-              flex: 0.4,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+    <>
+      {!authState?.authenticated ? (
+        <AlertNotificationRoot>
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <Block flex={0.2} middle style={{ marginVertical: 20 }}>
-              <Text color="#8898AA" size={30}>
-                Sign In
-              </Text>
-            </Block>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <ImageBackground
+                  source={require("../../assets/images/register-bg.png")}
+                  style={{
+                    width,
+                    height,
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <View style={{ width: width * 0.9, minHeight: height * 0.4 }}>
+                    <View
+                      style={{
+                        backgroundColor: "#F4F5F7",
+                        borderRadius: 14,
+                        shadowColor: "#000000",
+                        shadowOffset: {
+                          width: 0,
+                          height: 4,
+                        },
+                        shadowRadius: 8,
+                        shadowOpacity: 0.1,
+                        paddingHorizontal: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flex: 1,
+                      }}
+                    >
+                      <View style={{ marginVertical: 20 }}>
+                        <Text style={{ fontSize: 30, color: "#8898AA" }}>
+                          Sign In
+                        </Text>
+                      </View>
 
-            <KeyboardAvoidingView
-              style={{ flex: 1, width: width * 0.8 }}
-              behavior="padding"
-              enabled
-            >
-              <View style={{ flex: 0.5, gap: 14 }}>
-                <Input
-                  borderless
-                  placeholder="Username"
-                  onChangeText={setUsername}
-                  iconContent={
-                    <FontAwesome
-                      name="user"
-                      size={16}
-                      color={"#172B4D"}
-                      style={{ marginRight: 12 }}
-                    />
-                  }
-                />
+                      <View
+                        style={{ flex: 1, width: width * 0.8, marginTop: 20 }}
+                      >
+                        <View style={{ gap: 10 }}>
+                          <View
+                            style={{
+                              backgroundColor: "#fff",
+                              borderRadius: 8,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              marginBottom: 16,
+                              paddingHorizontal: 8,
+                            }}
+                          >
+                            <FontAwesome
+                              name="user"
+                              size={20}
+                              color="#172B4D"
+                              style={{ marginLeft: 8 }}
+                            />
+                            <TextInput
+                              placeholder="Username"
+                              onChangeText={setUsername}
+                              style={{ padding: 10, flex: 1 }}
+                            />
+                          </View>
 
-                <Input
-                  password
-                  borderless
-                  onChangeText={setPassword}
-                  placeholder="Password"
-                  iconContent={
-                    <FontAwesome
-                      name="lock"
-                      size={16}
-                      color={"#172B4D"}
-                      style={{ marginRight: 12 }}
-                    />
-                  }
-                />
+                          <View
+                            style={{
+                              backgroundColor: "#fff",
+                              borderRadius: 8,
+                              flexDirection: "row",
+                              alignItems: "center",
+                              paddingHorizontal: 8,
+                            }}
+                          >
+                            <FontAwesome
+                              name="lock"
+                              size={20}
+                              color="#172B4D"
+                              style={{ marginLeft: 8 }}
+                            />
+                            <TextInput
+                              placeholder="Password"
+                              onChangeText={setPassword}
+                              secureTextEntry={!passwordVisible}
+                              style={{ padding: 10, flex: 1 }}
+                            />
+                            <FontAwesome
+                              name={passwordVisible ? "eye" : "eye-slash"}
+                              size={20}
+                              color="#172B4D"
+                              onPress={() =>
+                                setPasswordVisible(!passwordVisible)
+                              }
+                              style={{ marginRight: 8 }}
+                            />
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            width: "100%",
+                            alignItems: "center",
+                            marginTop: 30,
+                          }}
+                        >
+                          {loading ? (
+                            <View
+                              style={{ position: "relative", width: "100%" }}
+                            >
+                              <Button title="SIGN IN" disabled={true} />
+                              <ActivityIndicator
+                                size={"large"}
+                                style={{
+                                  position: "absolute",
+                                  right: 0,
+                                  left: 0,
+                                  top: 0,
+                                  bottom: 0,
+                                }}
+                              />
+                            </View>
+                          ) : (
+                            <View
+                              style={{ width: "100%", alignItems: "stretch" }}
+                            >
+                              <Button
+                                color="#2DCE89"
+                                title="SIGN IN"
+                                disabled={!username || !password}
+                                onPress={() => handleSignIn()}
+                              />
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </ImageBackground>
               </View>
-
-              <View style={{ width: "50%", margin: "auto" }}>
-                <Button
-                  color="#2DCE89"
-                  title="SIGN IN"
-                  onPress={() => handleSignIn()}
-                />
-              </View>
-            </KeyboardAvoidingView>
-          </View>
-        </Block>
-      </ImageBackground>
-    </Block>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </AlertNotificationRoot>
+      ) : (
+        <IsNotPageSecure />
+      )}
+    </>
   );
 }
-// }

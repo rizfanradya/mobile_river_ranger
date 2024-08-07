@@ -54,12 +54,16 @@ export const AuthProvider = ({ children }: any) => {
         { username, password },
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       );
-      setAuthState({ token: data.access_token, authenticated: true });
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${data.access_token}`;
-      await SecureStore.setItemAsync(tokenKey, data.access_token);
-      return data;
+      if (data.status) {
+        setAuthState({ token: data.access_token, authenticated: true });
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${data.access_token}`;
+        await SecureStore.setItemAsync(tokenKey, data.access_token);
+        return data;
+      } else {
+        return { error: true, message: "Password invalid" };
+      }
     } catch (error) {
       return { error: true, message: error as any };
     }
