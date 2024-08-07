@@ -65,36 +65,40 @@ export default function FormMasterData() {
   });
 
   const handleCamera = async () => {
-    setButtonLoading(false);
-    const imagePerm = await ImagePicker.requestCameraPermissionsAsync();
-    if (imagePerm.status !== "granted") {
-      Alert.alert(
-        "Izin diperlukan",
-        "Izin kamera diperlukan untuk mengambil gambar."
-      );
-      return;
-    }
-    const resultImage: any = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!resultImage.canceled) {
-      setCameraUri(resultImage.assets[0].uri);
+    if (buttonAddData) {
+      setButtonLoading(false);
+      const imagePerm = await ImagePicker.requestCameraPermissionsAsync();
+      if (imagePerm.status !== "granted") {
+        Alert.alert(
+          "Izin diperlukan",
+          "Izin kamera diperlukan untuk mengambil gambar."
+        );
+        return;
+      }
+      const resultImage: any = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!resultImage.canceled) {
+        setCameraUri(resultImage.assets[0].uri);
+      }
     }
   };
 
   const handleFile = async () => {
-    setButtonLoading(false);
-    const resultImage: any = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!resultImage.canceled) {
-      setCameraUri(resultImage.assets[0].uri);
+    if (buttonAddData) {
+      setButtonLoading(false);
+      const resultImage: any = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!resultImage.canceled) {
+        setCameraUri(resultImage.assets[0].uri);
+      }
     }
   };
 
@@ -344,8 +348,8 @@ const styles = StyleSheet.create({
   },
   mainButton: {
     position: "absolute",
-    bottom: 50,
-    right: 30,
+    bottom: 25,
+    right: 25,
     width: 70,
     height: 70,
     zIndex: 999,
@@ -364,7 +368,7 @@ const styles = StyleSheet.create({
   },
   animatedButton: {
     position: "absolute",
-    bottom: 55,
+    bottom: 35,
     right: 35,
   },
   button: {

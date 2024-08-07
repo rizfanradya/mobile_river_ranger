@@ -1,28 +1,16 @@
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  View,
-  Button,
-  TouchableOpacity,
-  Animated,
-} from "react-native";
-import { HelloWave } from "@/components/HelloWave";
+import { Image, StyleSheet, Platform, View, Button, Text } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { useAuth } from "@/context/authContext";
 import { useNavigation } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamListBase } from "@react-navigation/native";
 import IsPageSecure from "@/components/isPageSecure";
-import { FontAwesome } from "@expo/vector-icons";
 import FormMasterData from "@/components/formMasterData";
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-  const { authState, onSignOut } = useAuth();
+  const { authState } = useAuth();
 
   useEffect(() => {
     if (!authState?.authenticated) {
@@ -43,56 +31,38 @@ export default function HomeScreen() {
               />
             }
           >
-            <ThemedView style={styles.titleContainer}>
-              <ThemedText type="title">Welcome!</ThemedText>
-              <HelloWave />
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-              <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-              <ThemedText>
-                Edit{" "}
-                <ThemedText type="defaultSemiBold">
-                  app/(tabs)/index.tsx
-                </ThemedText>{" "}
-                to see changes. Press{" "}
-                <ThemedText type="defaultSemiBold">
-                  {Platform.select({ ios: "cmd + d", android: "cmd + m" })}
-                </ThemedText>{" "}
-                to open developer tools.
-              </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-              <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-              <ThemedText>
-                Tap the Explore tab to learn more about what's included in this
-                starter app.
-              </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-              <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-              <ThemedText>
-                When you're ready, run{" "}
-                <ThemedText type="defaultSemiBold">
-                  npm run reset-project
-                </ThemedText>{" "}
-                to get a fresh{" "}
-                <ThemedText type="defaultSemiBold">app</ThemedText> directory.
-                This will move the current{" "}
-                <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-                <ThemedText type="defaultSemiBold">app-example</ThemedText>.{" "}
-                <ThemedText type="defaultSemiBold">
-                  {authState?.token}
-                </ThemedText>
-                .
-                <ThemedText type="defaultSemiBold">
-                  {authState?.authenticated?.toString()}
-                </ThemedText>
-                .
-              </ThemedText>
-            </ThemedView>
-
-            <View>
-              <Button onPress={onSignOut} title="Logout" />
+            <View
+              style={{
+                backgroundColor: "#373A40",
+                borderRadius: 10,
+                overflow: "hidden",
+                flexDirection: "row",
+              }}
+            >
+              <Image
+                source={require("@/assets/images/partial-react-logo.png")}
+                style={{ width: 100, height: 100 }}
+              />
+              <View style={{ padding: 6 }}>
+                <Text
+                  style={{ color: "white", flexShrink: 1, flexWrap: "wrap" }}
+                >
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+                  id nulla libero....
+                </Text>
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 12,
+                    backgroundColor: "#FFAD60",
+                    borderRadius: 6,
+                    padding: 4,
+                    alignSelf: "flex-end",
+                  }}
+                >
+                  Option 1
+                </Text>
+              </View>
             </View>
           </ParallaxScrollView>
           <FormMasterData />
@@ -105,15 +75,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
   reactLogo: {
     height: 178,
     width: 290,
