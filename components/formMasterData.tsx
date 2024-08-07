@@ -92,12 +92,14 @@ export default function FormMasterData() {
     <>
       <>
         {cameraUri && (
-          <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: cameraUri }}
-              style={styles.image}
-              resizeMode="contain"
-            />
+          <View style={styles.formContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: cameraUri }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            </View>
           </View>
         )}
       </>
@@ -158,7 +160,7 @@ export default function FormMasterData() {
 }
 
 const styles = StyleSheet.create({
-  imageContainer: {
+  formContainer: {
     backgroundColor: "white",
     position: "absolute",
     bottom: 20,
@@ -167,10 +169,17 @@ const styles = StyleSheet.create({
     top: 50,
     borderRadius: 20,
     overflow: "hidden",
+    zIndex: 9999,
+  },
+  imageContainer: {
+    height: 250,
+    overflow: "hidden",
   },
   image: {
     width: "100%",
     aspectRatio: 1,
+    height: 350,
+    marginHorizontal: "auto",
   },
   mainButton: {
     position: "absolute",
