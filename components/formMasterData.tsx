@@ -9,12 +9,14 @@ import {
   View,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 
 export default function FormMasterData() {
   const [buttonAddData, setButtonAddData] = useState(false);
   const cameraAnim = useRef(new Animated.Value(0)).current;
   const formAnim = useRef(new Animated.Value(0)).current;
   const [cameraUri, setCameraUri] = useState<string | null>(null);
+  const [description, setDescription] = useState<string>("");
 
   useEffect(() => {
     Animated.parallel([
@@ -55,37 +57,89 @@ export default function FormMasterData() {
   });
 
   const handleCamera = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
+    const imagePerm = await ImagePicker.requestCameraPermissionsAsync();
+    const geoLocatePerm = await Location.requestForegroundPermissionsAsync();
+    if (geoLocatePerm.status !== "granted") {
+      Alert.alert(
+        "Izin diperlukan",
+        "Izin lokasi diperlukan untuk mengambil lokasi terkini."
+      );
+      return;
+    }
+    if (imagePerm.status !== "granted") {
       Alert.alert(
         "Izin diperlukan",
         "Izin kamera diperlukan untuk mengambil gambar."
       );
       return;
     }
-    const result: any = await ImagePicker.launchCameraAsync({
+    const resultImage: any = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    if (!result.canceled) {
-      setCameraUri(result.assets[0].uri);
+    if (!resultImage.canceled) {
+      setCameraUri(resultImage.assets[0].uri);
     }
-    console.log(result);
+    const location = await Location.getCurrentPositionAsync({});
+    const data = {
+      datetime: new Date().toISOString(),
+      location,
+      image: resultImage.assets[0].uri,
+      description,
+      choice_id: 1,
+    };
+    alert(`
+      datetime    = ${data.datetime}
+-------------------------------------------
+      location    = ${JSON.stringify(location)}
+-------------------------------------------
+      image       = ${data.image}
+-------------------------------------------
+      description = ${data.description}
+-------------------------------------------
+      choice_id   = ${data.choice_id}
+      `);
   };
 
   const handleForm = async () => {
-    const result: any = await ImagePicker.launchImageLibraryAsync({
+    const geoLocatePerm = await Location.requestForegroundPermissionsAsync();
+    if (geoLocatePerm.status !== "granted") {
+      Alert.alert(
+        "Izin diperlukan",
+        "Izin lokasi diperlukan untuk mengambil lokasi terkini."
+      );
+      return;
+    }
+    const resultImage: any = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    if (!result.canceled) {
-      setCameraUri(result.assets[0].uri);
+    if (!resultImage.canceled) {
+      setCameraUri(resultImage.assets[0].uri);
     }
-    console.log(result);
+    const location = await Location.getCurrentPositionAsync({});
+    const data = {
+      datetime: new Date().toISOString(),
+      location,
+      image: resultImage.assets[0].uri,
+      description,
+      choice_id: 1,
+    };
+    alert(`
+      datetime    = ${data.datetime}
+-------------------------------------------
+      location    = ${JSON.stringify(location)}
+-------------------------------------------
+      image       = ${data.image}
+-------------------------------------------
+      description = ${data.description}
+-------------------------------------------
+      choice_id   = ${data.choice_id}
+      `);
   };
 
   return (
