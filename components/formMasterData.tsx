@@ -1,6 +1,7 @@
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
-import { Animated, TouchableOpacity, View } from "react-native";
+import { Alert, Animated, TouchableOpacity, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 export default function FormMasterData() {
   const [buttonAddData, setButtonAddData] = useState(false);
@@ -32,21 +33,52 @@ export default function FormMasterData() {
     inputRange: [0, 1],
     outputRange: [50, -75],
   });
-
   const cameraTranslateX = cameraAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [0, -30],
   });
-
   const formTranslateY = formAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [50, -10],
   });
-
   const formTranslateX = formAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [0, -75],
   });
+
+  const handleCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Izin diperlukan",
+        "Izin kamera diperlukan untuk mengambil gambar."
+      );
+      return;
+    }
+    const result: any = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      Alert.alert("Gambar dipilih", `URI Gambar: ${result.assets[0].uri}`);
+    }
+    console.log(result);
+  };
+
+  const handleForm = async () => {
+    const result: any = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      Alert.alert("File dipilih", `URI File: ${result.assets[0].uri}`);
+    }
+    console.log(result);
+  };
 
   return (
     <>
@@ -94,7 +126,7 @@ export default function FormMasterData() {
         }}
       >
         <TouchableOpacity
-          onPress={() => alert("Kamera")}
+          onPress={() => handleCamera()}
           style={{
             width: 50,
             height: 50,
@@ -135,7 +167,7 @@ export default function FormMasterData() {
         }}
       >
         <TouchableOpacity
-          onPress={() => alert("Form")}
+          onPress={() => handleForm()}
           style={{
             width: 50,
             height: 50,
