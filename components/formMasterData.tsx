@@ -7,7 +7,11 @@ import {
   Button,
   Dimensions,
   Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -35,8 +39,18 @@ export default function FormMasterData({
   const cameraAnim = useRef(new Animated.Value(0)).current;
   const formAnim = useRef(new Animated.Value(0)).current;
   const [cameraUri, setCameraUri] = useState<any>(null);
-  const [description, setDescription] = useState<string>("");
-  const [choice_id, setChoice_id] = useState<number>(0);
+  const [description, setDescription] = useState<string | null>(null);
+  const [siteCondition, setSiteCondition] = useState<string | null>(null);
+  const [weatherCondition, setWeatherCondition] = useState<string | null>(null);
+  const [highOrLowTide, setHighOrLowTide] = useState<string | null>(null);
+  const [runningWaterOrNot, setRunningWaterOrNot] = useState<string | null>(
+    null
+  );
+  const [waterFlowsFastOrSlow, setWaterFlowsFastOrSlow] = useState<
+    string | null
+  >(null);
+  const [smellyWaterOrNot, setSmellyWaterOrNot] = useState<string | null>(null);
+  const [coloredWater, setColoredWater] = useState<string | null>(null);
 
   useEffect(() => {
     Animated.parallel([
@@ -105,7 +119,7 @@ export default function FormMasterData({
     if (buttonAddData) {
       setButtonLoading(false);
       const resultImage: any = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
       if (!resultImage.canceled) {
         const resizedImage = await ImageManipulator.manipulateAsync(
@@ -119,48 +133,79 @@ export default function FormMasterData({
   };
 
   async function onSubmit() {
-    setButtonLoading(true);
-    const geoLocatePerm = await Location.requestForegroundPermissionsAsync();
-    if (geoLocatePerm.status !== "granted") {
-      Alert.alert(
-        "Izin diperlukan",
-        "Izin lokasi diperlukan untuk mengambil lokasi terkini."
-      );
-      return;
-    }
-
-    try {
-      const decoded: { id: string } = jwtDecode(authState!.token!);
-      const getLocation = await Location.getCurrentPositionAsync({});
-      const formData: any = new FormData();
-
-      formData.append("user_id", decoded.id);
-      formData.append("description", description);
-      formData.append("longitude", getLocation.coords.longitude.toString());
-      formData.append("latitude", getLocation.coords.latitude.toString());
-
-      if (cameraUri) {
-        const fileType = cameraUri.split(".").pop();
-        formData.append("file", {
-          uri: cameraUri,
-          name: `photo.${fileType}`,
-          type: `image/${fileType}`,
-        });
+    if (
+      cameraUri &&
+      siteCondition &&
+      weatherCondition &&
+      highOrLowTide &&
+      runningWaterOrNot &&
+      waterFlowsFastOrSlow &&
+      smellyWaterOrNot &&
+      coloredWater &&
+      description
+    ) {
+      setButtonLoading(true);
+      const geoLocatePerm = await Location.requestForegroundPermissionsAsync();
+      if (geoLocatePerm.status !== "granted") {
+        Alert.alert(
+          "Izin diperlukan",
+          "Izin lokasi diperlukan untuk mengambil lokasi terkini."
+        );
+        return;
       }
 
-      await axios.post(`${backendFastApi}/master`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${authState?.token}`,
-        },
-      });
-      setCameraUri(null);
-      Alert.alert("Success", "Data has been saved successfully.");
-      setReloadGetData(!reloadGetData);
-    } catch (error: any) {
-      Alert.alert("Failed", "Failed to save data, please try again later.");
+      try {
+        const decoded: { id: string } = jwtDecode(authState!.token!);
+        const getLocation = await Location.getCurrentPositionAsync({});
+        const formData: any = new FormData();
+
+        formData.append("user_id", decoded.id);
+        formData.append("site_condition", siteCondition);
+        formData.append("weather_condition", weatherCondition);
+        formData.append("high_or_low_tide", highOrLowTide);
+        formData.append("running_water_or_not", runningWaterOrNot);
+        formData.append("water_flows_fast_or_slow", waterFlowsFastOrSlow);
+        formData.append("smelly_water_or_not", smellyWaterOrNot);
+        formData.append("colored_water", coloredWater);
+        formData.append("description", description);
+        formData.append("longitude", getLocation.coords.longitude.toString());
+        formData.append("latitude", getLocation.coords.latitude.toString());
+
+        if (cameraUri) {
+          const fileType = cameraUri.split(".").pop();
+          formData.append("file", {
+            uri: cameraUri,
+            name: `photo.${fileType}`,
+            type: `image/${fileType}`,
+          });
+        }
+
+        await axios.post(`${backendFastApi}/master`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authState?.token}`,
+          },
+        });
+        handleFormClose();
+        Alert.alert("Success", "Data has been saved successfully.");
+        setReloadGetData(!reloadGetData);
+      } catch (error: any) {
+        Alert.alert("Failed", "Failed to save data, please try again later.");
+      }
+      setButtonLoading(false);
     }
-    setButtonLoading(false);
+  }
+
+  function handleFormClose() {
+    setCameraUri(null);
+    setDescription(null);
+    setSiteCondition(null);
+    setWeatherCondition(null);
+    setHighOrLowTide(null);
+    setRunningWaterOrNot(null);
+    setWaterFlowsFastOrSlow(null);
+    setSmellyWaterOrNot(null);
+    setColoredWater(null);
   }
 
   return (
@@ -176,42 +221,290 @@ export default function FormMasterData({
                   resizeMode="cover"
                 />
               </View>
-              <View style={styles.formInputContainer}>
-                <TextInput
-                  multiline
-                  placeholder="Description..."
-                  numberOfLines={6}
-                  style={styles.textareaInputBase}
-                  onChangeText={setDescription}
-                />
-                {/* <View style={styles.selectInputBase}>
-                  <RNPickerSelect
-                    onValueChange={setChoice_id}
-                    items={[
-                      {
-                        label: "Banjir",
-                        value: 1,
-                      },
-                      {
-                        label: "Pencemaran",
-                        value: 2,
-                      },
-                      {
-                        label: "Kebakaran",
-                        value: 3,
-                      },
-                    ]}
-                  />
-                </View> */}
-              </View>
+
+              <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View style={styles.formInputContainer}>
+                  <View style={styles.cardInput}>
+                    <Text style={styles.inputLabel}>Site Condition</Text>
+                    <View
+                      style={{
+                        ...styles.inputItem,
+                        borderColor: siteCondition ? "#ccc" : "red",
+                      }}
+                    >
+                      <RNPickerSelect
+                        onValueChange={setSiteCondition}
+                        placeholder={{
+                          label: "Select Site Condition...",
+                          value: null,
+                        }}
+                        items={[
+                          {
+                            label: "Kotor (Tumpukan Sampah)",
+                            value: "Kotor (Tumpukan Sampah)",
+                          },
+                          {
+                            label: "Bersih",
+                            value: "Bersih",
+                          },
+                        ]}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.cardInput}>
+                    <Text style={styles.inputLabel}>River Condition</Text>
+
+                    <View style={{ ...styles.cardInput, marginTop: 8 }}>
+                      <Text
+                        style={{
+                          ...styles.inputLabel,
+                          fontSize: 15,
+                          color: "gray",
+                        }}
+                      >
+                        Air Pasang atau Surut
+                      </Text>
+                      <View
+                        style={{
+                          ...styles.inputItem,
+                          borderColor: highOrLowTide ? "#ccc" : "red",
+                        }}
+                      >
+                        <RNPickerSelect
+                          onValueChange={setHighOrLowTide}
+                          placeholder={{
+                            label: "Yes or No...",
+                            value: null,
+                          }}
+                          items={[
+                            {
+                              label: "Yes",
+                              value: "Yes",
+                            },
+                            {
+                              label: "No",
+                              value: "No",
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={{ ...styles.cardInput, marginTop: 8 }}>
+                      <Text
+                        style={{
+                          ...styles.inputLabel,
+                          fontSize: 15,
+                          color: "gray",
+                        }}
+                      >
+                        Air Mengalir atau Tidak
+                      </Text>
+                      <View
+                        style={{
+                          ...styles.inputItem,
+                          borderColor: runningWaterOrNot ? "#ccc" : "red",
+                        }}
+                      >
+                        <RNPickerSelect
+                          onValueChange={setRunningWaterOrNot}
+                          placeholder={{
+                            label: "Yes or No...",
+                            value: null,
+                          }}
+                          items={[
+                            {
+                              label: "Yes",
+                              value: "Yes",
+                            },
+                            {
+                              label: "No",
+                              value: "No",
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={{ ...styles.cardInput, marginTop: 8 }}>
+                      <Text
+                        style={{
+                          ...styles.inputLabel,
+                          fontSize: 15,
+                          color: "gray",
+                        }}
+                      >
+                        Air Mengalir Cepat atau Lambat
+                      </Text>
+                      <View
+                        style={{
+                          ...styles.inputItem,
+                          borderColor: waterFlowsFastOrSlow ? "#ccc" : "red",
+                        }}
+                      >
+                        <RNPickerSelect
+                          onValueChange={setWaterFlowsFastOrSlow}
+                          placeholder={{
+                            label: "Yes or No...",
+                            value: null,
+                          }}
+                          items={[
+                            {
+                              label: "Yes",
+                              value: "Yes",
+                            },
+                            {
+                              label: "No",
+                              value: "No",
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={{ ...styles.cardInput, marginTop: 8 }}>
+                      <Text
+                        style={{
+                          ...styles.inputLabel,
+                          fontSize: 15,
+                          color: "gray",
+                        }}
+                      >
+                        Air Bau atau Tidak
+                      </Text>
+                      <View
+                        style={{
+                          ...styles.inputItem,
+                          borderColor: smellyWaterOrNot ? "#ccc" : "red",
+                        }}
+                      >
+                        <RNPickerSelect
+                          onValueChange={setSmellyWaterOrNot}
+                          placeholder={{
+                            label: "Yes or No...",
+                            value: null,
+                          }}
+                          items={[
+                            {
+                              label: "Yes",
+                              value: "Yes",
+                            },
+                            {
+                              label: "No",
+                              value: "No",
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={{ ...styles.cardInput, marginTop: 8 }}>
+                      <Text
+                        style={{
+                          ...styles.inputLabel,
+                          fontSize: 15,
+                          color: "gray",
+                        }}
+                      >
+                        Air Berwarna
+                      </Text>
+                      <View
+                        style={{
+                          ...styles.inputItem,
+                          borderColor: coloredWater ? "#ccc" : "red",
+                        }}
+                      >
+                        <RNPickerSelect
+                          onValueChange={setColoredWater}
+                          placeholder={{
+                            label: "Pilih warna air...",
+                            value: null,
+                          }}
+                          items={[
+                            {
+                              label: "Hitam",
+                              value: "Hitam",
+                            },
+                            {
+                              label: "Putih Susu",
+                              value: "Putih Susu",
+                            },
+                            {
+                              label: "Hijau",
+                              value: "Hijau",
+                            },
+                            {
+                              label: "Jernih",
+                              value: "Jernih",
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.cardInput}>
+                    <Text style={styles.inputLabel}>Weather Condition</Text>
+                    <View
+                      style={{
+                        ...styles.inputItem,
+                        borderColor: weatherCondition ? "#ccc" : "red",
+                      }}
+                    >
+                      <RNPickerSelect
+                        onValueChange={setWeatherCondition}
+                        placeholder={{
+                          label: "Select Weather Condition...",
+                          value: null,
+                        }}
+                        items={[
+                          {
+                            label: "Hujan",
+                            value: "Hujan",
+                          },
+                          {
+                            label: "Berawan",
+                            value: "Berawan",
+                          },
+                          {
+                            label: "Cerah",
+                            value: "Cerah",
+                          },
+                        ]}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.cardInput}>
+                    <Text style={styles.inputLabel}>Description</Text>
+                    <View
+                      style={{
+                        ...styles.inputItem,
+                        borderColor: description ? "#ccc" : "red",
+                      }}
+                    >
+                      <TextInput
+                        multiline
+                        placeholder="Description..."
+                        numberOfLines={6}
+                        style={{ textAlignVertical: "top", padding: 10 }}
+                        onChangeText={setDescription}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </ScrollView>
+
               <View style={styles.formButtonContainer}>
                 <View style={styles.formButton}>
                   <Button
                     color={"#F5365C"}
                     title="CLOSE"
-                    onPress={() => setCameraUri(null)}
+                    onPress={() => handleFormClose()}
                   />
                 </View>
+
                 <View style={styles.formButton}>
                   {buttonLoading ? (
                     <>
@@ -222,12 +515,7 @@ export default function FormMasterData({
                       />
                     </>
                   ) : (
-                    <Button
-                      color={"#2DCE89"}
-                      title="SAVE"
-                      disabled={!description || !choice_id}
-                      onPress={onSubmit}
-                    />
+                    <Button color={"#2DCE89"} title="SAVE" onPress={onSubmit} />
                   )}
                 </View>
               </View>
@@ -297,11 +585,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 9999,
     width: dimension.width,
-    height: dimension.height,
+    height: dimension.height - 350,
     padding: 20,
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.7)",
-    top: 0,
+    top: 170,
     left: 0,
     right: 0,
     bottom: 0,
@@ -339,10 +627,9 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     backgroundColor: "#fff",
   },
-  textareaInputBase: {
+  cardInput: {
     borderRadius: 8,
     marginBottom: 10,
-    textAlignVertical: "top",
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 12,
@@ -357,12 +644,30 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     marginBottom: 5,
+    fontSize: 17,
+    fontWeight: "bold",
+  },
+  inputItem: {
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    shadowColor: "#000",
+    backgroundColor: "#fff",
+    shadowOffset: {
+      width: 2,
+      height: 4,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    marginTop: 8,
   },
   formButtonContainer: {
     paddingHorizontal: 20,
     flexDirection: "row",
     gap: 10,
     alignSelf: "flex-end",
+    paddingTop: 12,
+    marginBottom: -8,
   },
   formButton: {
     width: 100,
