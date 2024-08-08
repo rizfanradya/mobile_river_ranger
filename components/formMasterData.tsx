@@ -1,5 +1,5 @@
 import { FontAwesome6 } from "@expo/vector-icons";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -13,11 +13,23 @@ import {
   View,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import * as Location from "expo-location";
 import RNPickerSelect from "react-native-picker-select";
+import axios from "axios";
+import { backendFastApi } from "@/constants/constant";
+import { useAuth } from "@/context/authContext";
+import { jwtDecode } from "jwt-decode";
 const dimension = Dimensions.get("screen");
 
-export default function FormMasterData() {
+export default function FormMasterData({
+  reloadGetData,
+  setReloadGetData,
+}: {
+  reloadGetData: boolean;
+  setReloadGetData: Dispatch<SetStateAction<boolean>>;
+}) {
+  const { authState } = useAuth();
   const [buttonAddData, setButtonAddData] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const cameraAnim = useRef(new Animated.Value(0)).current;
@@ -77,12 +89,14 @@ export default function FormMasterData() {
       }
       const resultImage: any = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
       });
       if (!resultImage.canceled) {
-        setCameraUri(resultImage.assets[0].uri);
+        const resizedImage = await ImageManipulator.manipulateAsync(
+          resultImage.assets[0].uri,
+          [{ resize: { width: 400, height: 600 } }],
+          { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        );
+        setCameraUri(resizedImage.uri);
       }
     }
   };
@@ -92,12 +106,14 @@ export default function FormMasterData() {
       setButtonLoading(false);
       const resultImage: any = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
       });
       if (!resultImage.canceled) {
-        setCameraUri(resultImage.assets[0].uri);
+        const resizedImage = await ImageManipulator.manipulateAsync(
+          resultImage.assets[0].uri,
+          [{ resize: { width: 400, height: 600 } }],
+          { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+        );
+        setCameraUri(resizedImage.uri);
       }
     }
   };
@@ -112,27 +128,37 @@ export default function FormMasterData() {
       );
       return;
     }
+
     try {
-      const data = {
-        datetime: new Date().toISOString(),
-        location: await Location.getCurrentPositionAsync({}),
-        image: cameraUri,
-        description,
-        choice_id,
-      };
-      alert(`
-            datetime    = ${data.datetime}
-      -------------------------------------------
-            location    = ${JSON.stringify(data.location)}
-      -------------------------------------------
-            image       = ${data.image}
-      -------------------------------------------
-            description = ${data.description}
-      -------------------------------------------
-            choice_id   = ${data.choice_id}
-            `);
+      const decoded: { id: string } = jwtDecode(authState!.token!);
+      const getLocation = await Location.getCurrentPositionAsync({});
+      const formData: any = new FormData();
+
+      formData.append("user_id", decoded.id);
+      formData.append("description", description);
+      formData.append("longitude", getLocation.coords.longitude.toString());
+      formData.append("latitude", getLocation.coords.latitude.toString());
+
+      if (cameraUri) {
+        const fileType = cameraUri.split(".").pop();
+        formData.append("file", {
+          uri: cameraUri,
+          name: `photo.${fileType}`,
+          type: `image/${fileType}`,
+        });
+      }
+
+      await axios.post(`${backendFastApi}/master`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${authState?.token}`,
+        },
+      });
+      setCameraUri(null);
+      Alert.alert("Success", "Data has been saved successfully.");
+      setReloadGetData(!reloadGetData);
     } catch (error: any) {
-      alert(error);
+      Alert.alert("Failed", "Failed to save data, please try again later.");
     }
     setButtonLoading(false);
   }
@@ -275,6 +301,10 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.7)",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   formContainer: {
     backgroundColor: "#F4F5F7",
