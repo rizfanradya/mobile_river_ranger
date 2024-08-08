@@ -184,7 +184,7 @@ export default function FormMasterData({
                   style={styles.textareaInputBase}
                   onChangeText={setDescription}
                 />
-                <View style={styles.selectInputBase}>
+                {/* <View style={styles.selectInputBase}>
                   <RNPickerSelect
                     onValueChange={setChoice_id}
                     items={[
@@ -202,7 +202,7 @@ export default function FormMasterData({
                       },
                     ]}
                   />
-                </View>
+                </View> */}
               </View>
               <View style={styles.formButtonContainer}>
                 <View style={styles.formButton}>
