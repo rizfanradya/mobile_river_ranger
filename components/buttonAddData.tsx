@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import * as ImageManipulator from "expo-image-manipulator";
 import { useNavigation } from "expo-router";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -71,12 +70,7 @@ export default function ButtonAddData() {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
       if (!resultImage.canceled) {
-        const resizedImage = await ImageManipulator.manipulateAsync(
-          resultImage.assets[0].uri,
-          [{ resize: { width: 400, height: 600 } }],
-          { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-        );
-        navigation.navigate("(form)", { fileUri: resizedImage.uri });
+        navigation.navigate("(form)", { fileUri: resultImage.assets[0].uri });
       }
     }
   };
@@ -87,12 +81,7 @@ export default function ButtonAddData() {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
       if (!resultImage.canceled) {
-        const resizedImage = await ImageManipulator.manipulateAsync(
-          resultImage.assets[0].uri,
-          [{ resize: { width: 400, height: 600 } }],
-          { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
-        );
-        navigation.navigate("(form)", { fileUri: resizedImage.uri });
+        navigation.navigate("(form)", { fileUri: resultImage.assets[0].uri });
       }
     }
   };

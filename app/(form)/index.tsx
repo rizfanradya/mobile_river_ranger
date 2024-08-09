@@ -30,6 +30,7 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from "react-native-alert-notification";
+import * as ImageManipulator from "expo-image-manipulator";
 
 export default function FormMasterData() {
   const route = useRoute();
@@ -101,8 +102,13 @@ export default function FormMasterData() {
 
         if (fileUri) {
           const fileType = fileUri.split(".").pop();
+          const resizedImage = await ImageManipulator.manipulateAsync(
+            fileUri,
+            [{ resize: { width: 400, height: 600 } }],
+            { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+          );
           formData.append("file", {
-            uri: fileUri,
+            uri: resizedImage.uri,
             name: `photo.${fileType}`,
             type: `image/${fileType}`,
           });
