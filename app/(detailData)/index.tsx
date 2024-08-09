@@ -22,6 +22,7 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from "react-native-alert-notification";
+import MapView, { Marker } from "react-native-maps";
 
 export default function DetailData() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
@@ -158,17 +159,27 @@ export default function DetailData() {
 
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Lokasi</Text>
-              <View style={styles.cardContent}>
-                <Text>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-                  in ipsum eu nunc mattis aliquet vitae pretium arcu. Nulla
-                  commodo justo id venenatis eleifend. Vestibulum mauris elit,
-                  ullamcorper quis massa a, molestie vestibulum ex. Aliquam ac
-                  dui finibus, volutpat leo et, eleifend nisl. Nam vitae ligula
-                  condimentum quam lobortis iaculis id faucibus enim. Ut vitae
-                  nunc luctus, varius elit id, feugiat turpis. Proin tincidunt
-                  erat felis, a cursus tortor consequat non.
-                </Text>
+              <View
+                style={{
+                  ...styles.cardContent,
+                  padding: 0,
+                  overflow: "hidden",
+                  borderColor: "transparent",
+                }}
+              >
+                <MapView
+                  style={styles.map}
+                  initialRegion={{
+                    latitude: -4.777625,
+                    longitude: 105.268715,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }}
+                >
+                  <Marker
+                    coordinate={{ longitude: 105.268715, latitude: -4.777625 }}
+                  />
+                </MapView>
               </View>
             </View>
           </View>
@@ -240,5 +251,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     marginTop: 8,
     padding: 12,
+  },
+  map: {
+    width: "100%",
+    aspectRatio: 1,
+    height: "auto",
   },
 });
