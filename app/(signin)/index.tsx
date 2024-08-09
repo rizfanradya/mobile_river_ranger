@@ -37,8 +37,8 @@ export default function SignIn() {
     if (result && result.error) {
       Dialog.show({
         type: ALERT_TYPE.WARNING,
-        title: "Failed",
-        textBody: "Invalid username or password",
+        title: "Gagak",
+        textBody: "Username atau password salah",
         button: "OK",
         closeOnOverlayTap: false,
       });
@@ -101,7 +101,7 @@ export default function SignIn() {
                     >
                       <View style={{ marginVertical: 20 }}>
                         <Text style={{ fontSize: 30, color: "#8898AA" }}>
-                          Sign In
+                          Login
                         </Text>
                       </View>
 
@@ -194,7 +194,7 @@ export default function SignIn() {
                             >
                               <Button
                                 color="#2DCE89"
-                                title="SIGN IN"
+                                title="LOGIN"
                                 disabled={!username || !password}
                                 onPress={() => handleSignIn()}
                               />

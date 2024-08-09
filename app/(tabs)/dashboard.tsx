@@ -42,7 +42,7 @@ export default function HomeScreen() {
           setMasterData(getMasterData.data);
         } catch (error) {
           console.error(error);
-          Alert.alert("Failed", "Failed to get data, please try again later.");
+          Alert.alert("Gagal", "Gagal mengambil data");
         }
       }
     })();
@@ -54,7 +54,7 @@ export default function HomeScreen() {
     Linking.canOpenURL(url)
       .then((supported) => {
         if (!supported) {
-          Alert.alert("Error", "Google Maps is not supported on this device.");
+          Alert.alert("Error", "Google Maps tidak tersedia.");
         } else {
           return Linking.openURL(url);
         }

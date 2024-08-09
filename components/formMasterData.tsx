@@ -7,8 +7,6 @@ import {
   Button,
   Dimensions,
   Image,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -69,7 +67,7 @@ export default function FormMasterData({
       if (buttonAddData) {
         setButtonAddData(false);
       }
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timeout);
   }, [buttonAddData]);
 
@@ -187,10 +185,10 @@ export default function FormMasterData({
           },
         });
         handleFormClose();
-        Alert.alert("Success", "Data has been saved successfully.");
+        Alert.alert("Berhasil", "Data berhasil disimpan.");
         setReloadGetData(!reloadGetData);
       } catch (error: any) {
-        Alert.alert("Failed", "Failed to save data, please try again later.");
+        Alert.alert("Gagak", "Data gagal disimpan.");
       }
       setButtonLoading(false);
     }
@@ -225,7 +223,7 @@ export default function FormMasterData({
               <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                 <View style={styles.formInputContainer}>
                   <View style={styles.cardInput}>
-                    <Text style={styles.inputLabel}>Site Condition</Text>
+                    <Text style={styles.inputLabel}>Kondisi situs</Text>
                     <View
                       style={{
                         ...styles.inputItem,
@@ -235,7 +233,7 @@ export default function FormMasterData({
                       <RNPickerSelect
                         onValueChange={setSiteCondition}
                         placeholder={{
-                          label: "Select Site Condition...",
+                          label: "Pilih kondisi situs...",
                           value: null,
                         }}
                         items={[
@@ -253,7 +251,7 @@ export default function FormMasterData({
                   </View>
 
                   <View style={styles.cardInput}>
-                    <Text style={styles.inputLabel}>River Condition</Text>
+                    <Text style={styles.inputLabel}>Kondisi Sungai</Text>
 
                     <View style={{ ...styles.cardInput, marginTop: 8 }}>
                       <Text
@@ -274,17 +272,17 @@ export default function FormMasterData({
                         <RNPickerSelect
                           onValueChange={setHighOrLowTide}
                           placeholder={{
-                            label: "Yes or No...",
+                            label: "Pilih kondisi air...",
                             value: null,
                           }}
                           items={[
                             {
-                              label: "Yes",
-                              value: "Yes",
+                              label: "Pasang",
+                              value: "Pasang",
                             },
                             {
-                              label: "No",
-                              value: "No",
+                              label: "Surut",
+                              value: "Surut",
                             },
                           ]}
                         />
@@ -310,17 +308,17 @@ export default function FormMasterData({
                         <RNPickerSelect
                           onValueChange={setRunningWaterOrNot}
                           placeholder={{
-                            label: "Yes or No...",
+                            label: "Iya atau Tidak...",
                             value: null,
                           }}
                           items={[
                             {
-                              label: "Yes",
-                              value: "Yes",
+                              label: "Iya",
+                              value: "Iya",
                             },
                             {
-                              label: "No",
-                              value: "No",
+                              label: "Tidak",
+                              value: "Tidak",
                             },
                           ]}
                         />
@@ -346,17 +344,17 @@ export default function FormMasterData({
                         <RNPickerSelect
                           onValueChange={setWaterFlowsFastOrSlow}
                           placeholder={{
-                            label: "Yes or No...",
+                            label: "Pilih kondisi air...",
                             value: null,
                           }}
                           items={[
                             {
-                              label: "Yes",
-                              value: "Yes",
+                              label: "Cepat",
+                              value: "Cepat",
                             },
                             {
-                              label: "No",
-                              value: "No",
+                              label: "Lambat",
+                              value: "Lambat",
                             },
                           ]}
                         />
@@ -382,17 +380,17 @@ export default function FormMasterData({
                         <RNPickerSelect
                           onValueChange={setSmellyWaterOrNot}
                           placeholder={{
-                            label: "Yes or No...",
+                            label: "Iya atau Tidak...",
                             value: null,
                           }}
                           items={[
                             {
-                              label: "Yes",
-                              value: "Yes",
+                              label: "Iya",
+                              value: "Iya",
                             },
                             {
-                              label: "No",
-                              value: "No",
+                              label: "Tidak",
+                              value: "Tidak",
                             },
                           ]}
                         />
@@ -445,7 +443,7 @@ export default function FormMasterData({
                   </View>
 
                   <View style={styles.cardInput}>
-                    <Text style={styles.inputLabel}>Weather Condition</Text>
+                    <Text style={styles.inputLabel}>Kondisi Cuaca</Text>
                     <View
                       style={{
                         ...styles.inputItem,
@@ -455,7 +453,7 @@ export default function FormMasterData({
                       <RNPickerSelect
                         onValueChange={setWeatherCondition}
                         placeholder={{
-                          label: "Select Weather Condition...",
+                          label: "Pilih Kondisi Cuaca...",
                           value: null,
                         }}
                         items={[
@@ -477,7 +475,7 @@ export default function FormMasterData({
                   </View>
 
                   <View style={styles.cardInput}>
-                    <Text style={styles.inputLabel}>Description</Text>
+                    <Text style={styles.inputLabel}>Deskripsi</Text>
                     <View
                       style={{
                         ...styles.inputItem,
@@ -486,7 +484,7 @@ export default function FormMasterData({
                     >
                       <TextInput
                         multiline
-                        placeholder="Description..."
+                        placeholder="Deskripsi..."
                         numberOfLines={6}
                         style={{ textAlignVertical: "top", padding: 10 }}
                         onChangeText={setDescription}
