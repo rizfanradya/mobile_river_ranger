@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Button,
+  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -460,14 +461,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imageContainer: {
-    height: 250,
+    height: 300,
     overflow: "hidden",
+    width: Dimensions.get("window").width,
   },
   image: {
     width: "100%",
     aspectRatio: 1,
-    height: 350,
-    marginHorizontal: "auto",
+    height: "auto",
+    margin: "auto",
   },
   formInputContainer: {
     padding: 20,
