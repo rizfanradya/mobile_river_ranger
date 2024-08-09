@@ -90,14 +90,14 @@ export default function FormMasterData() {
         formData.append("user_id", decoded.id);
         formData.append("site_condition", siteCondition);
         formData.append("weather_condition", weatherCondition);
-        formData.append("high_or_low_tide", highOrLowTide);
-        formData.append("running_water_or_not", runningWaterOrNot);
-        formData.append("water_flows_fast_or_slow", waterFlowsFastOrSlow);
-        formData.append("smelly_water_or_not", smellyWaterOrNot);
-        formData.append("colored_water", coloredWater);
+        formData.append("rivera_condition", highOrLowTide);
+        formData.append("riverb_condition", runningWaterOrNot);
+        formData.append("riverc_condition", waterFlowsFastOrSlow);
+        formData.append("riverd_condition", smellyWaterOrNot);
+        formData.append("rivere_condition", coloredWater);
         formData.append("description", description);
-        formData.append("longitude", getLocation.coords.longitude.toString());
-        formData.append("latitude", getLocation.coords.latitude.toString());
+        formData.append("longitude", getLocation.coords.longitude);
+        formData.append("latitude", getLocation.coords.latitude);
 
         if (fileUri) {
           const fileType = fileUri.split(".").pop();
@@ -125,6 +125,7 @@ export default function FormMasterData() {
           },
         });
       } catch (error: any) {
+        // console.error(error.response.data);
         Dialog.show({
           type: ALERT_TYPE.WARNING,
           title: "Gagal",
@@ -180,7 +181,7 @@ export default function FormMasterData() {
                   items={[
                     {
                       label: "Kotor (Tumpukan Sampah)",
-                      value: "Kotor (Tumpukan Sampah)",
+                      value: "Kotor",
                     },
                     {
                       label: "Bersih",
@@ -254,12 +255,12 @@ export default function FormMasterData() {
                     }}
                     items={[
                       {
-                        label: "Iya",
-                        value: "Iya",
+                        label: "Mengalir",
+                        value: "Mengalir",
                       },
                       {
-                        label: "Tidak",
-                        value: "Tidak",
+                        label: "Tidak Mengalir",
+                        value: "Tidak Mengalir",
                       },
                     ]}
                   />
@@ -326,12 +327,12 @@ export default function FormMasterData() {
                     }}
                     items={[
                       {
-                        label: "Iya",
-                        value: "Iya",
+                        label: "Bau",
+                        value: "Bau",
                       },
                       {
-                        label: "Tidak",
-                        value: "Tidak",
+                        label: "Tidak Bau",
+                        value: "Tidak Bau",
                       },
                     ]}
                   />
