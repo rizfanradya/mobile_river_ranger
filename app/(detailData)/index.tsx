@@ -29,6 +29,8 @@ export default function DetailData() {
   const route = useRoute();
   const { id }: any = route.params;
   const { authState } = useAuth();
+  const [longitude, setLongitude] = useState<any>(null);
+  const [latitude, setLatitude] = useState<any>(null);
   const [data, setData] = useState({
     location: "",
     rivera_condition: "",
@@ -58,6 +60,10 @@ export default function DetailData() {
                 headers: { Authorization: `Bearer ${authState?.token}` },
               }
             );
+            const [longitudeSpl, latitudeSpl] =
+              getMasterData.data.location.split(",");
+            setLongitude(parseFloat(longitudeSpl));
+            setLatitude(parseFloat(latitudeSpl));
             setData(getMasterData.data);
           } catch (error) {
             Dialog.show({
@@ -100,14 +106,24 @@ export default function DetailData() {
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Tanggal</Text>
               <View style={styles.cardContent}>
-                <Text>08 Agustus 2024 pukul 12.18.47</Text>
+                <Text>
+                  {data.upload_date &&
+                    new Date(data.upload_date).toLocaleString("id-ID", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
+                </Text>
               </View>
             </View>
 
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Kondisi situs</Text>
               <View style={styles.cardContent}>
-                <Text>Kotor (Tumpukan Sampah)</Text>
+                <Text>{data.site_condition && data.site_condition}</Text>
               </View>
             </View>
 
@@ -119,14 +135,14 @@ export default function DetailData() {
               <View style={styles.card}>
                 <Text style={styles.subCardTitle}>Air Pasang atau Surut</Text>
                 <View style={styles.cardContent}>
-                  <Text>Pasang</Text>
+                  <Text>{data.rivera_condition && data.rivera_condition}</Text>
                 </View>
               </View>
 
               <View style={styles.card}>
                 <Text style={styles.subCardTitle}>Air Mengalir atau Tidak</Text>
                 <View style={styles.cardContent}>
-                  <Text>Iya</Text>
+                  <Text>{data.riverb_condition && data.riverb_condition}</Text>
                 </View>
               </View>
 
@@ -135,21 +151,21 @@ export default function DetailData() {
                   Air Mengalir Cepat atau Lambat
                 </Text>
                 <View style={styles.cardContent}>
-                  <Text>Lambat</Text>
+                  <Text>{data.riverc_condition && data.riverc_condition}</Text>
                 </View>
               </View>
 
               <View style={styles.card}>
                 <Text style={styles.subCardTitle}>Air Bau atau Tidak</Text>
                 <View style={styles.cardContent}>
-                  <Text>Tidak</Text>
+                  <Text>{data.riverd_condition && data.riverd_condition}</Text>
                 </View>
               </View>
 
               <View style={styles.card}>
                 <Text style={styles.subCardTitle}>Air Berwarna</Text>
                 <View style={styles.cardContent}>
-                  <Text>Putih Susu</Text>
+                  <Text>{data.rivere_condition && data.rivere_condition}</Text>
                 </View>
               </View>
             </View>
@@ -157,23 +173,14 @@ export default function DetailData() {
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Kondisi cuaca</Text>
               <View style={styles.cardContent}>
-                <Text>Berawan</Text>
+                <Text>{data.weather_condition && data.weather_condition}</Text>
               </View>
             </View>
 
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Deskripsi</Text>
               <View style={styles.cardContent}>
-                <Text>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-                  in ipsum eu nunc mattis aliquet vitae pretium arcu. Nulla
-                  commodo justo id venenatis eleifend. Vestibulum mauris elit,
-                  ullamcorper quis massa a, molestie vestibulum ex. Aliquam ac
-                  dui finibus, volutpat leo et, eleifend nisl. Nam vitae ligula
-                  condimentum quam lobortis iaculis id faucibus enim. Ut vitae
-                  nunc luctus, varius elit id, feugiat turpis. Proin tincidunt
-                  erat felis, a cursus tortor consequat non.
-                </Text>
+                <Text>{data.description && data.description}</Text>
               </View>
             </View>
 
@@ -187,19 +194,19 @@ export default function DetailData() {
                   borderColor: "transparent",
                 }}
               >
-                <MapView
-                  style={styles.map}
-                  initialRegion={{
-                    latitude: -4.777625,
-                    longitude: 105.268715,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.01,
-                  }}
-                >
-                  <Marker
-                    coordinate={{ longitude: 105.268715, latitude: -4.777625 }}
-                  />
-                </MapView>
+                {longitude && latitude && (
+                  <MapView
+                    style={styles.map}
+                    initialRegion={{
+                      latitude,
+                      longitude,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    }}
+                  >
+                    <Marker coordinate={{ longitude, latitude }} />
+                  </MapView>
+                )}
               </View>
             </View>
           </View>
