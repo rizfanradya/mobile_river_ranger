@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: any) => {
   const signIn = async (username: string, password: string) => {
     try {
       const { data } = await axios.post(
-        `${backendFastApi}/token`,
+        `${backendFastApi}/token?client_type=mobile`,
         { username, password },
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       );
