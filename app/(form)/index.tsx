@@ -104,7 +104,7 @@ export default function FormMasterData() {
           const fileType = fileUri.split(".").pop();
           const resizedImage = await ImageManipulator.manipulateAsync(
             fileUri,
-            [{ resize: { width: 400, height: 600 } }],
+            [{ resize: { width: 400 } }],
             { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
           );
           formData.append("file", {
