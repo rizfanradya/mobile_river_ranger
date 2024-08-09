@@ -98,8 +98,7 @@ export default function HomeScreen() {
                 style={{
                   color: "white",
                   opacity: 0.7,
-                  fontSize: 13,
-                  marginBottom: 4,
+                  fontSize: 12,
                 }}
               >
                 {data.upload_date
@@ -113,9 +112,14 @@ export default function HomeScreen() {
                     })
                   : ""}
               </Text>
+              <Text style={{ color: "white", paddingBottom: 2, fontSize: 12 }}>
+                Kotor (Tumpukan Sampah), Air Pasang, Air Tidak Mengalir, Air
+                Mengalir Lambat, Air Tidak Berbau, Air berwarna Putih Susu,
+                Cuaca Berawan
+              </Text>
               <Text
                 style={styles.cardTextDescription}
-                numberOfLines={3}
+                numberOfLines={2}
                 ellipsizeMode="tail"
               >
                 {data.description}
@@ -151,7 +155,7 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: 100,
-    height: 100,
+    height: "auto",
   },
   cardDescription: {
     flex: 1,
@@ -161,6 +165,7 @@ const styles = StyleSheet.create({
     color: "white",
     flexShrink: 1,
     flexWrap: "wrap",
+    fontSize: 14,
   },
   cardOptionChip: {
     color: "white",
