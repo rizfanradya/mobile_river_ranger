@@ -17,7 +17,11 @@ import {
 export default function ProfileScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const { onSignOut, authState } = useAuth();
-  const [userData, setUserData] = useState({ username: "" });
+  const [userData, setUserData] = useState({
+    username: "",
+    first_name: "",
+    last_name: "",
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -70,7 +74,12 @@ export default function ProfileScreen() {
 
         <Text style={styles.username}>{userData.username}</Text>
 
-        <View></View>
+        <View>
+          <Text style={styles.label}>First Name</Text>
+          <Text style={styles.data}>{userData.first_name}</Text>
+          <Text style={styles.label}>Last Name</Text>
+          <Text style={styles.data}>{userData.last_name}</Text>
+        </View>
 
         <Button onPress={onSignOut} title="Logout" />
       </ParallaxScrollView>
@@ -100,5 +109,28 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     marginTop: -8,
+  },
+  label: {
+    marginBottom: 5,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+  },
+  data: {
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#CAD1D7",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 2,
+      height: 4,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    marginTop: 8,
+    padding: 10,
+    color: "white",
+    marginBottom: 14,
+    fontSize: 16,
   },
 });
