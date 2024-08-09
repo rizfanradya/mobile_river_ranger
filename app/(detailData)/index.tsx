@@ -29,7 +29,19 @@ export default function DetailData() {
   const route = useRoute();
   const { id }: any = route.params;
   const { authState } = useAuth();
-  const [data, setData] = useState();
+  const [data, setData] = useState({
+    location: "",
+    rivera_condition: "",
+    riverc_condition: "",
+    rivere_condition: "",
+    upload_date: "",
+    description: "",
+    site_condition: "",
+    riverb_condition: "",
+    riverd_condition: "",
+    weather_condition: "",
+    origin_filepath: "",
+  });
 
   useFocusEffect(
     useCallback(() => {
@@ -68,11 +80,19 @@ export default function DetailData() {
     <AlertNotificationRoot>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <Image
-            source={require("@/assets/images/partial-react-logo.png")}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          {data.origin_filepath ? (
+            <Image
+              source={{ uri: `http://${data.origin_filepath}` }}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          ) : (
+            <Image
+              source={require("@/assets/images/partial-react-logo.png")}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          )}
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
@@ -201,6 +221,7 @@ const styles = StyleSheet.create({
     height: 300,
     overflow: "hidden",
     width: Dimensions.get("window").width,
+    backgroundColor: "#000",
   },
   image: {
     width: "100%",

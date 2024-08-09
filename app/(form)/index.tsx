@@ -164,7 +164,7 @@ export default function FormMasterData() {
           <Image
             source={{ uri: fileUri }}
             style={styles.image}
-            resizeMode="cover"
+            resizeMode="contain"
           />
         </View>
 
@@ -471,6 +471,7 @@ const styles = StyleSheet.create({
     height: 300,
     overflow: "hidden",
     width: Dimensions.get("window").width,
+    backgroundColor: "#000",
   },
   image: {
     width: "100%",
