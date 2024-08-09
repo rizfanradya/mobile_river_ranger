@@ -10,43 +10,43 @@ import {
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { useAuth } from "@/context/authContext";
 import { useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ParamListBase } from "@react-navigation/native";
-import IsPageSecure from "@/components/isPageSecure";
-import FormMasterData from "@/components/formMasterData";
+import { ParamListBase, useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
 import { backendFastApi } from "@/constants/constant";
 import { jwtDecode } from "jwt-decode";
 import { FontAwesome6 } from "@expo/vector-icons";
+import ButtonAddData from "@/components/buttonAddData";
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-  const [reloadGetData, setReloadGetData] = useState<boolean>(false);
   const { authState } = useAuth();
   const [getMasterData, setMasterData] = useState<any[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      if (!authState?.authenticated) {
-        navigation.navigate("(signin)");
-      } else {
-        try {
-          const decoded: { id: string } = jwtDecode(authState!.token!);
-          const getMasterData = await axios.get(
-            `${backendFastApi}/master?limit=10&offset=0&user_id=${decoded.id}`,
-            {
-              headers: { Authorization: `Bearer ${authState?.token}` },
-            }
-          );
-          setMasterData(getMasterData.data);
-        } catch (error) {
-          console.error(error);
-          Alert.alert("Gagal", "Gagal mengambil data");
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        if (!authState?.authenticated) {
+          navigation.navigate("(signin)");
+        } else {
+          try {
+            const decoded: { id: string } = jwtDecode(authState!.token!);
+            const getMasterData = await axios.get(
+              `${backendFastApi}/master?limit=10&offset=0&user_id=${decoded.id}`,
+              {
+                headers: { Authorization: `Bearer ${authState?.token}` },
+              }
+            );
+            setMasterData(getMasterData.data);
+          } catch (error) {
+            console.error(error);
+            Alert.alert("Gagal", "Gagal mengambil data");
+          }
         }
-      }
-    })();
-  }, [authState, reloadGetData]);
+      })();
+    }, [authState])
+  );
 
   const openGoogleMaps = (location: string) => {
     const [longitude, latitude] = location.split(",");
@@ -64,55 +64,43 @@ export default function HomeScreen() {
 
   return (
     <>
-      {authState?.authenticated && authState.token ? (
-        <>
-          <ParallaxScrollView
-            headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-            headerImage={
-              <Image
-                source={require("@/assets/images/partial-react-logo.png")}
-                style={styles.reactLogo}
-              />
-            }
-          >
-            {getMasterData.map((data, index) => (
-              <View style={styles.cardContainer} key={index}>
-                <Image
-                  source={require("@/assets/images/partial-react-logo.png")}
-                  style={styles.cardImage}
-                />
-                <View style={styles.cardDescription}>
-                  <Text
-                    style={styles.cardTextDescription}
-                    numberOfLines={3}
-                    ellipsizeMode="tail"
-                  >
-                    {data.description}
-                  </Text>
-                  <Text style={styles.cardOptionChip}>
-                    {data.upload_date_format}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.containerLocationIcon}
-                  onPress={() => openGoogleMaps(data.location)}
-                >
-                  <FontAwesome6
-                    name="location-dot"
-                    style={styles.locationIcon}
-                  />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </ParallaxScrollView>
-          <FormMasterData
-            reloadGetData={reloadGetData}
-            setReloadGetData={setReloadGetData}
+      <ParallaxScrollView
+        headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+        headerImage={
+          <Image
+            source={require("@/assets/images/partial-react-logo.png")}
+            style={styles.reactLogo}
           />
-        </>
-      ) : (
-        <IsPageSecure />
-      )}
+        }
+      >
+        {getMasterData.map((data, index) => (
+          <View style={styles.cardContainer} key={index}>
+            <Image
+              source={require("@/assets/images/partial-react-logo.png")}
+              style={styles.cardImage}
+            />
+            <View style={styles.cardDescription}>
+              <Text
+                style={styles.cardTextDescription}
+                numberOfLines={3}
+                ellipsizeMode="tail"
+              >
+                {data.description}
+              </Text>
+              <Text style={styles.cardOptionChip}>
+                {data.upload_date_format}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.containerLocationIcon}
+              onPress={() => openGoogleMaps(data.location)}
+            >
+              <FontAwesome6 name="location-dot" style={styles.locationIcon} />
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ParallaxScrollView>
+      <ButtonAddData />
     </>
   );
 }

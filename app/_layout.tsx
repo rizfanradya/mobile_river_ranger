@@ -37,8 +37,13 @@ export default function RootLayout() {
           value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
           <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(signin)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(form)"
+              options={{ headerShown: false }}
+              initialParams={{ fileUri: null }}
+            />
             <Stack.Screen name="+not-found" />
           </Stack>
         </ThemeProvider>

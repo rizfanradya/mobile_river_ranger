@@ -4,9 +4,25 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useAuth } from "@/context/authContext";
+import { useNavigation } from "expo-router";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ParamListBase, useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export default function ProfileScreen() {
-  const { onSignOut } = useAuth();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const { onSignOut, authState } = useAuth();
+
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        if (!authState?.authenticated) {
+          navigation.navigate("(signin)");
+        }
+      })();
+    }, [authState])
+  );
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
