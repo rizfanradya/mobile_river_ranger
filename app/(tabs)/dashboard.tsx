@@ -90,7 +90,7 @@ export default function HomeScreen() {
             key={index}
           >
             <Image
-              source={require("@/assets/images/partial-react-logo.png")}
+              source={{ uri: `http://${data.thumbnail_filepath}` }}
               style={styles.cardImage}
             />
             <View style={styles.cardDescription}>
@@ -113,9 +113,10 @@ export default function HomeScreen() {
                   : ""}
               </Text>
               <Text style={{ color: "white", paddingBottom: 2, fontSize: 12 }}>
-                Kotor (Tumpukan Sampah), Air Pasang, Air Tidak Mengalir, Air
-                Mengalir Lambat, Air Tidak Berbau, Air berwarna Putih Susu,
-                Cuaca Berawan
+                {data.site_condition}, Air {data.rivera_condition}, Air{" "}
+                {data.riverb_condition}, Air Mengalir {data.riverc_condition},
+                Air {data.riverd_condition}, Air Berwarna{" "}
+                {data.rivere_condition}, Cuaca {data.weather_condition}
               </Text>
               <Text
                 style={styles.cardTextDescription}
