@@ -18,6 +18,11 @@ import { backendFastApi } from "@/constants/constant";
 import { jwtDecode } from "jwt-decode";
 import { FontAwesome6 } from "@expo/vector-icons";
 import ButtonAddData from "@/components/buttonAddData";
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Dialog,
+} from "react-native-alert-notification";
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
@@ -40,8 +45,13 @@ export default function HomeScreen() {
             );
             setMasterData(getMasterData.data);
           } catch (error) {
-            console.error(error);
-            Alert.alert("Gagal", "Gagal mengambil data");
+            Dialog.show({
+              type: ALERT_TYPE.WARNING,
+              title: "Error",
+              textBody: "Gagal mengambil data",
+              button: "OK",
+              closeOnOverlayTap: false,
+            });
           }
         }
       })();
@@ -63,7 +73,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <>
+    <AlertNotificationRoot>
       <ParallaxScrollView
         headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
         headerImage={
@@ -74,21 +84,41 @@ export default function HomeScreen() {
         }
       >
         {getMasterData.map((data, index) => (
-          <View style={styles.cardContainer} key={index}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("(detailData)", { id: data.id })}
+            style={styles.cardContainer}
+            key={index}
+          >
             <Image
               source={require("@/assets/images/partial-react-logo.png")}
               style={styles.cardImage}
             />
             <View style={styles.cardDescription}>
               <Text
+                style={{
+                  color: "white",
+                  opacity: 0.7,
+                  fontSize: 13,
+                  marginBottom: 4,
+                }}
+              >
+                {data.upload_date
+                  ? new Date(data.upload_date).toLocaleString("id-ID", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })
+                  : ""}
+              </Text>
+              <Text
                 style={styles.cardTextDescription}
                 numberOfLines={3}
                 ellipsizeMode="tail"
               >
                 {data.description}
-              </Text>
-              <Text style={styles.cardOptionChip}>
-                {data.upload_date_format}
               </Text>
             </View>
             <TouchableOpacity
@@ -97,11 +127,11 @@ export default function HomeScreen() {
             >
               <FontAwesome6 name="location-dot" style={styles.locationIcon} />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         ))}
       </ParallaxScrollView>
       <ButtonAddData />
-    </>
+    </AlertNotificationRoot>
   );
 }
 
@@ -126,7 +156,6 @@ const styles = StyleSheet.create({
   cardDescription: {
     flex: 1,
     padding: 8,
-    justifyContent: "space-between",
   },
   cardTextDescription: {
     color: "white",

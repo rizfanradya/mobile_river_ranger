@@ -44,6 +44,11 @@ export default function RootLayout() {
               options={{ headerShown: false }}
               initialParams={{ fileUri: null }}
             />
+            <Stack.Screen
+              name="(detailData)"
+              options={{ headerShown: false }}
+              initialParams={{ id: null }}
+            />
             <Stack.Screen name="+not-found" />
           </Stack>
         </ThemeProvider>
